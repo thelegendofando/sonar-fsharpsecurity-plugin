@@ -1,6 +1,5 @@
 ﻿module SonarAnalyzer.FSharp.UnitTest.TestCases.S4787_EncryptingData
 
-
 open System
 open System.Security.Cryptography
 
@@ -25,10 +24,10 @@ type MyClass() =
         myRSAC.Encrypt(data, false) |> ignore    // Noncompliant
         myRSAC.Decrypt(data, false) |> ignore   // Noncompliant
 
-
+        let span = new ReadOnlySpan<Byte>()
         // Note: TryEncrypt/TryDecrypt are only in .NET Core 2.1+
-        //            myRSAC.TryEncrypt(data, Span<byte>.Empty, padding, out written) // Non compliant
-        //            myRSAC.TryDecrypt(data, Span<byte>.Empty, padding, out written) // Non compliant
+        myRSAC.TryEncrypt(span, Span<byte>.Empty, padding) |> ignore// Non compliant
+        myRSAC.TryDecrypt(span, Span<byte>.Empty, padding) |> ignore// Non compliant
 
         let rgbKey : byte[] = [| 1uy; 2uy; 3uy |]
         let rgbIV : byte[] = [| 4uy; 5uy; 6uy |]
@@ -41,12 +40,12 @@ type MyClass() =
         rijn.CreateDecryptor(rgbKey, rgbIV) |> ignore      // Noncompliant
 
 
-type MyAsymmetricCrypto() = // Noncompliant
-    inherit System.Security.Cryptography.AsymmetricAlgorithm()
+type MyAsymmetricCrypto() =
+    inherit System.Security.Cryptography.AsymmetricAlgorithm() // Noncompliant
 
 
-type MySymmetricCrypto() = // Noncompliant
-    inherit System.Security.Cryptography.SymmetricAlgorithm()
+type MySymmetricCrypto() =
+    inherit System.Security.Cryptography.SymmetricAlgorithm() // Noncompliant
 
     override this.CreateDecryptor(rgbKey, rgbIV) = null
     override this.CreateEncryptor(rgbKey, rgbIV) = null
@@ -55,12 +54,6 @@ type MySymmetricCrypto() = // Noncompliant
 
 type MyRSA() =
     inherit System.Security.Cryptography.RSA() // Noncompliant
-
-    // Dummy methods with the same names as the additional methods added in Net Core 2.1.
-    member this.TryEncrypt() = ()
-    member this.TryEncrypt(dummyMethod) = ()
-    member this.TryDecrypt() = ()
-    member this.TryDecrypt(dummyMethod) = ()
 
     member this.OtherMethod() = ()
 
@@ -80,20 +73,9 @@ type Class2() =
         customAsymProvider.Decrypt(data, padding)  |> ignore // Noncompliant
         customAsymProvider.DecryptValue(data)      |> ignore // Noncompliant
 
-        // Should raise on the Try* methods added in NET Core 2.1
-        // Note: this test is cheating - we can't currently referencing the
-        // real 2.1 assemblies since the test project is targetting an older
-        // NET Framework, so we're testing against a custom subclass
-        // to which we've added the new method names.
-        customAsymProvider.TryEncrypt()        // Noncompliant
-        customAsymProvider.TryEncrypt(null)    // Noncompliant
-        customAsymProvider.TryDecrypt()        // Noncompliant
-        customAsymProvider.TryDecrypt(null)    // Noncompliant
-
         customAsymProvider.OtherMethod()
 
         // Should raise on derived symmetric classes
         let customSymProvider = new MySymmetricCrypto()
         customSymProvider.CreateEncryptor() |> ignore   // Noncompliant
         customSymProvider.CreateDecryptor() |> ignore   // Noncompliant
-

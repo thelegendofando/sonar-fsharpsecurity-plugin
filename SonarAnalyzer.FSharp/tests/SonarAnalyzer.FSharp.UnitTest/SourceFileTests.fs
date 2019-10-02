@@ -47,7 +47,6 @@ let S4784_UsingRegularExpressions() =
     Verifier.verify @"TestCases\S4784_UsingRegularExpressions.fs" rule
 
 [<Test>]
-[<Ignore("not implemented")>]
 let S4787_EncryptingData() =
     let rule = Rules.S4787_EncryptingData.Rule
     Verifier.verify @"TestCases\S4787_EncryptingData.fs" rule
