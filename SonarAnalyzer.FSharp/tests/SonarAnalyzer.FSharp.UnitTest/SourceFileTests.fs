@@ -52,7 +52,6 @@ let S4787_EncryptingData() =
     Verifier.verify @"TestCases\S4787_EncryptingData.fs" rule
 
 [<Test>]
-[<Ignore("not implemented")>]
 let S4790_CreatingHashAlgorithms() =
     let rule = Rules.S4790_CreatingHashAlgorithms.Rule
     Verifier.verify @"TestCases\S4790_CreatingHashAlgorithms.fs" rule

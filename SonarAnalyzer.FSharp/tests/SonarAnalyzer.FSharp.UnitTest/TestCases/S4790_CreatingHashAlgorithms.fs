@@ -20,20 +20,21 @@ type TestClass() =
         ()
 
     member this.AdditionalTests(sha1:SHA1CryptoServiceProvider ) =
-        use myHash = new MyHashAlgorithm()     // Noncompliant
-        use myHash = new MyHashAlgorithm(123)      // Noncompliant
+        //use myHash = new MyHashAlgorithm()     // Noncompliant
+        //use myHash = new MyHashAlgorithm(123)      // Noncompliant
 
-        let myHash = MyHashAlgorithm.Create()      // Noncompliant
-        let myHash = MyHashAlgorithm.Create(42)    // Noncompliant
+        //let myHash = MyHashAlgorithm.Create()      // Noncompliant
+        //let myHash = MyHashAlgorithm.Create(42)    // Noncompliant
 
-        let myHash = MyHashAlgorithm.CreateHash()  // compliant - method name is not Create
-        let myHash = MyHashAlgorithm.DoCreate()    // compliant - method name is not Create
+        //let myHash = MyHashAlgorithm.CreateHash()  // compliant - method name is not Create
+        //let myHash = MyHashAlgorithm.DoCreate()    // compliant - method name is not Create
 
-        // Other methods are not checked
-        let hash = sha1.ComputeHash(null:byte[])
-        let hash = sha1.Hash
-        let canReuse = sha1.CanReuseTransform
-        sha1.Clear()
+        //// Other methods are not checked
+        //let hash = sha1.ComputeHash(null:byte[])
+        //let hash = sha1.Hash
+        //let canReuse = sha1.CanReuseTransform
+        //sha1.Clear()
+        ()
 
 type MyHashAlgorithm(data:int) =
     inherit HashAlgorithm()  // Noncompliant
